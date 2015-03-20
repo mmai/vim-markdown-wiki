@@ -1,7 +1,7 @@
-" File: wikilink.vim
+" File: vim-markdown-wiki.vim
 " Author: Henri Bourcereau 
-" Version: 1.0
-" Last Modified: March 19, 2015
+" Version: 1.1
+" Last Modified: March 20, 2015
 "
 " "vim-markdown-wiki" is a Vim plugin which eases the navigation between files 
 " in a personnal wiki
@@ -10,12 +10,6 @@
 " Installation
 " ------------
 " Copy the vim-markdown-wiki.vim file into the $HOME/.vim/plugin/ directory
-"
-" Configuration
-" -------------
-" Window split on footer and sidebar detection can be disabled by writing this
-" line on your .vimrc file :
-" let wikilinkAutosplit="off"
 "
 " Usage
 " -----
@@ -43,9 +37,6 @@ function! s:initVariable(var, value)
 endfunction
 
 "Initialize variables
-call s:initVariable("g:wikilinkAutosplit", "on")
-call s:initVariable("g:wikilinkOnEnter", "on")
-
 call s:initVariable("s:footer", "_Footer")
 call s:initVariable("s:sidebar", "_Sidebar")
 call s:initVariable("s:startWord", '[')
@@ -53,20 +44,11 @@ call s:initVariable("s:endWord", ']')
 call s:initVariable("s:startLink", '(')
 call s:initVariable("s:endLink", ')')
 
-function! WikiLinkGetWord()
-  let word = WikiLinkStrBetween(s:startWord, s:endWord)
+" *********************************************************************
+" *                      Utilities 
+" *********************************************************************
 
-  if !empty(word)
-    " strip leading and trailing spaces
-    let word = substitute(word, '^\s*\(.\{-}\)\s*$', '\1', '')
-    "substitute spaces by dashes
-    let word = substitute(word, '\s', '-', 'g')
-  end
-
-  return word
-endfunction
-
-function! WikiLinkStrBetween(startStr, endStr)
+function! MdwiStrBetween(startStr, endStr)
   let str = ''
 
   "Get string between <startStr> and <endStr>
@@ -82,28 +64,16 @@ function! WikiLinkStrBetween(startStr, endStr)
   return str
 endfunction
 
-function! WikiLinkFindLinkPos()
-  let origPos = getpos('.')
-  let newPos = origPos
-  let startPos = searchpos(s:startWord, 'bW', line('.'))
-  let endPos = searchpos(s:endWord, 'W', line('.'))
 
-  if (startPos[1] < origPos[2])
-    let nextchar = matchstr(getline('.'), '\%' . (col('.')+1) . 'c.')
-    if (nextchar == s:startLink)
-      let newPos = [origPos[0], line('.'), col('.') + 2, origPos[3]]
-    endif
-  endif
-
-  let ok = cursor(origPos[1], origPos[2]) "Return to the original position
-  return newPos
-endfunction
-
-
-function! WikiLinkWordFilename(word)
+function! MdwiWordFilename(word)
   let file_name = ''
   "Same directory and same extension as the current file
   if !empty(a:word)
+    " strip leading and trailing spaces
+    let word = substitute(a:word, '^\s*\(.\{-}\)\s*$', '\1', '')
+    "substitute spaces by dashes
+    let word = substitute(word, '\s', '-', 'g')
+
     let cur_file_name = bufname("%")
     let dir = fnamemodify(cur_file_name, ":h")
     if !empty(dir)
@@ -114,73 +84,102 @@ function! WikiLinkWordFilename(word)
       endif
     endif
     let extension = fnamemodify(cur_file_name, ":e")
-    let file_name = dir.a:word.".".extension
+    let file_name = dir.word.".".extension
   endif
   return file_name
 endfunction
 
-function! WikiLinkGetLink()
-  let link = ''
+" *********************************************************************
+" *                      Words 
+" *********************************************************************
 
-  "Is there already a link defined ?
-  let linkPos = WikiLinkFindLinkPos()
+function! MdwiFindWordPos()
+  let origPos = getpos('.')
+  let newPos = origPos
+  let endPos = searchpos(s:endWord, 'W', line('.'))
+  let startPos = searchpos(s:startWord, 'bW', line('.'))
+
+  if (startPos[0] != 0 )
+    let newcolpos = col('.') + 1
+    if (newcolpos == origPos[2])
+      let newcolpos = newcolpos + 1
+    endif
+    let newPos = [origPos[0], line('.'), newcolpos, origPos[3]]
+  endif
+
+  let ok = cursor(origPos[1], origPos[2]) "Return to the original position
+  return newPos
+endfunction
+
+function! MdwiGetWord()
+  let word = ''
+  let wordPos = MdwiFindWordPos()
+  if (wordPos != getpos('.'))
+    let ok = cursor(wordPos[1], wordPos[2])
+    let word = MdwiStrBetween(s:startWord, s:endWord)
+  endif
+  return word
+endfunction
+
+" *********************************************************************
+" *                      Links 
+" *********************************************************************
+function! MdwiFindLinkPos()
+  let origPos = getpos('.')
+  let newPos = origPos
+  let startPos = searchpos(s:startWord, 'bW', line('.'))
+  let endPos = searchpos(s:endWord, 'W', line('.'))
+
+  if (startPos[0] != 0)
+    let nextchar = matchstr(getline('.'), '\%' . (col('.')+1) . 'c.')
+    if (nextchar == s:startLink)
+      let newcolpos = col('.') + 2
+      if (newcolpos == origPos[2])
+        let newcolpos = newcolpos + 1
+      endif
+      let newPos = [origPos[0], line('.'), newcolpos, origPos[3]]
+    endif
+  endif
+
+  let ok = cursor(origPos[1], origPos[2]) "Return to the original position
+  return newPos
+endfunction
+
+function! MdwiGetLink()
+  let link = ''
+  "Is there a link defined ?
+  let linkPos = MdwiFindLinkPos()
   if (linkPos != getpos('.'))
     let ok = cursor(linkPos[1], linkPos[2])
-    let link = WikiLinkStrBetween(s:startLink, s:endLink)
-  else
-    "No link defined : return a constructed link based on the text between
-    "brackets
-    let link = WikiLinkWordFilename(WikiLinkGetWord())
-    if !empty(link)
-      "Add link to the document
-      let endPos = searchpos(s:endWord, 'W', line('.'))
-      let ok = cursor(endPos[0], endPos[1])
-      exec "normal a(".link.")"
-      exec ":w"
-    endif
+    let link = MdwiStrBetween(s:startLink, s:endLink)
   endif
   return link
 endfunction
 
-function! WikiLinkGotoLink()
-  let link = WikiLinkGetLink()
-  if !empty(link)
-    "Search in subdirectories
-    let mypath =  fnamemodify(bufname("%"), ":p:h")."/**"
-    let existing_link = findfile(link, mypath)
-    if !empty(existing_link)
-      let link = existing_link
+" ******** Go to link *****************
+function! MdwiGotoLink()
+  let word = MdwiGetWord()
+  let strCmd = ""
+  if !empty(word)
+    let link = MdwiGetLink()
+    if (empty(link))
+      let link = MdwiWordFilename(word)
+      "Add link to the document
+      let endPos = searchpos(s:endWord, 'W', line('.'))
+      let ok = cursor(endPos[0], endPos[1])
+      exec "normal! a(".link.")"
+      exec ":w"
+      "Write title to the new document
+      let strCmd = 'normal!\ a'.escape(word, ' \').'\<esc>yypv$r=o\<cr>'
     endif
-    exec "edit " . link 
+    exec 'edit +execute\ "' . escape(strCmd, ' "\') . '" ' . link 
   endif
 endfunction
 
-"search file in the current directory and its ancestors
-function! WikiLinkFindFile(afile)
-  "XXX does not work : return findfile(a:afile, '.;')
-  let afile = fnamemodify(a:afile, ":p")
-  if filereadable(afile)
-    return afile
-  else
-    let filename = fnamemodify(afile, ":t")
-    let file_parentdir = fnamemodify(afile, ":h:h")
-    if file_parentdir == "//"
-      "We've reached the root, no more parents
-      return ""
-    else
-      return WikiLinkFindFile(file_parentdir . "/" . filename)
-    endif
-  endif
-endfunction
-
-function! WikiLinkDetectFile(word)
-  return WikiLinkFindFile(WikiLinkWordFilename(a:word))
-endfunction
-
-command! WikiLinkGotoLink call WikiLinkGotoLink()
-nnoremap <script> <Plug>WikiLinkGotoLink :WikiLinkGotoLink<CR>
-if !hasmapto('<Plug>WikiLinkGotoLink')
-  nmap <silent> <CR> <Plug>WikiLinkGotoLink
+command! MdwiGotoLink call MdwiGotoLink()
+nnoremap <script> <Plug>MdwiGotoLink :MdwiGotoLink<CR>
+if !hasmapto('<Plug>MdwiGotoLink')
+  nmap <silent> <CR> <Plug>MdwiGotoLink
 endif
 "Shift+Return to return to the previous buffer 
 nmap <S-CR> :b#<CR>
