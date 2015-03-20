@@ -1,6 +1,6 @@
 " File: vim-markdown-wiki.vim
 " Author: Henri Bourcereau 
-" Version: 1.1
+" Version: 1.2
 " Last Modified: March 20, 2015
 "
 " "vim-markdown-wiki" is a Vim plugin which eases the navigation between files 
@@ -43,6 +43,8 @@ call s:initVariable("s:startWord", '[')
 call s:initVariable("s:endWord", ']')
 call s:initVariable("s:startLink", '(')
 call s:initVariable("s:endLink", ')')
+call s:initVariable("s:lastPosLine", 0)
+call s:initVariable("s:lastPosCol", 0)
 
 " *********************************************************************
 " *                      Utilities 
@@ -158,6 +160,9 @@ endfunction
 
 " ******** Go to link *****************
 function! MdwiGotoLink()
+  let s:lastPosLine = line('.')
+  let s:lastPosCol = col('.')
+
   let word = MdwiGetWord()
   let strCmd = ""
   if !empty(word)
@@ -172,6 +177,7 @@ function! MdwiGotoLink()
       "Write title to the new document
       let strCmd = 'normal!\ a'.escape(word, ' \').'\<esc>yypv$r=o\<cr>'
     endif
+
     exec 'edit +execute\ "' . escape(strCmd, ' "\') . '" ' . link 
   endif
 endfunction
@@ -181,6 +187,16 @@ nnoremap <script> <Plug>MdwiGotoLink :MdwiGotoLink<CR>
 if !hasmapto('<Plug>MdwiGotoLink')
   nmap <silent> <CR> <Plug>MdwiGotoLink
 endif
+
 "Shift+Return to return to the previous buffer 
-nmap <S-CR> :b#<CR>
+function! MdwiReturn()
+  exec 'buffer #'
+  let ok = cursor(s:lastPosLine, s:lastPosCol)
+endfunction
+
+command! MdwiReturn call MdwiReturn()
+nnoremap <script> <Plug>MdwiReturn :MdwiReturn<CR>
+if !hasmapto('<Plug>MdwiReturn')
+  nmap <silent> <S-CR> <Plug>MdwiReturn
+endif
 
