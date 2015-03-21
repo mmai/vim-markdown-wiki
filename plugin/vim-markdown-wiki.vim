@@ -1,7 +1,7 @@
 " File: vim-markdown-wiki.vim
 " Author: Henri Bourcereau 
-" Version: 1.2
-" Last Modified: March 20, 2015
+" Version: 1.3
+" Last Modified: March 21, 2015
 "
 " "vim-markdown-wiki" is a Vim plugin which eases the navigation between files 
 " in a personnal wiki
@@ -77,18 +77,24 @@ function! MdwiWordFilename(word)
     let word = substitute(word, '\s', '-', 'g')
 
     let cur_file_name = bufname("%")
-    let dir = fnamemodify(cur_file_name, ":h")
-    if !empty(dir)
-      if (dir == ".")
-        let dir = ""
-      else
-        let dir = dir."/"
-      endif
-    endif
     let extension = fnamemodify(cur_file_name, ":e")
-    let file_name = dir.word.".".extension
+    let file_name = word.".".extension
   endif
   return file_name
+endfunction
+
+function! MdwiFilePath(relativepath)
+  let cur_file_name = bufname("%")
+  let dir = fnamemodify(cur_file_name, ":h")
+  if !empty(dir)
+    if (dir == ".")
+      let dir = ""
+    else
+      let dir = dir."/"
+    endif
+  endif
+  let file_path = dir.a:relativepath
+  return file_path
 endfunction
 
 " *********************************************************************
@@ -166,18 +172,19 @@ function! MdwiGotoLink()
   let word = MdwiGetWord()
   let strCmd = ""
   if !empty(word)
-    let link = MdwiGetLink()
-    if (empty(link))
-      let link = MdwiWordFilename(word)
+    let relativepath = MdwiGetLink()
+    if (empty(relativepath))
+      let relativepath = MdwiWordFilename(word)
       "Add link to the document
       let endPos = searchpos(s:endWord, 'W', line('.'))
       let ok = cursor(endPos[0], endPos[1])
-      exec "normal! a(".link.")"
+      exec "normal! a(".relativepath.")"
       exec ":w"
       "Write title to the new document
       let strCmd = 'normal!\ a'.escape(word, ' \').'\<esc>yypv$r=o\<cr>'
     endif
 
+    let link = MdwiFilePath(relativepath)
     exec 'edit +execute\ "' . escape(strCmd, ' "\') . '" ' . link 
   endif
 endfunction
