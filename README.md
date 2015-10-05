@@ -6,7 +6,7 @@ vim-markdown-wiki
 Installation
 -------------
 
- Copy the plugin/vim-markdown-wiki.vim file into the $HOME/.vim/plugin/ directory
+ Copy the ftplugin/mkd_wiki.vim file into the $HOME/.vim/ftplugin/ directory
  or add the line `Bundle 'mmai/vim-markdown-wiki'` in your .vimrc if you use *Vundle* or a similar plugin manager
 
 Usage
