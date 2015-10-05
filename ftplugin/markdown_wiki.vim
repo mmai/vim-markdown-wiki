@@ -165,6 +165,7 @@ function! MdwiGetLink()
 endfunction
 
 " ******** Go to link *****************
+if !exists('*MdwiGotoLink')
 function! MdwiGotoLink()
   let s:lastPosLine = line('.')
   let s:lastPosCol = col('.')
@@ -188,22 +189,25 @@ function! MdwiGotoLink()
     exec 'edit +execute\ "' . escape(strCmd, ' "\') . '" ' . link 
   endif
 endfunction
+endif
 
-command! MdwiGotoLink call MdwiGotoLink()
-nnoremap <script> <Plug>MdwiGotoLink :MdwiGotoLink<CR>
+command! -buffer MdwiGotoLink call MdwiGotoLink()
+nnoremap <buffer> <script> <Plug>MdwiGotoLink :MdwiGotoLink<CR>
 if !hasmapto('<Plug>MdwiGotoLink')
-  nmap <silent> <CR> <Plug>MdwiGotoLink
+  nmap <buffer> <silent> <CR> <Plug>MdwiGotoLink
 endif
 
 "Shift+Return to return to the previous buffer 
+if !exists('*MdwiReturn')
 function! MdwiReturn()
   exec 'buffer #'
   let ok = cursor(s:lastPosLine, s:lastPosCol)
 endfunction
+endif
 
-command! MdwiReturn call MdwiReturn()
-nnoremap <script> <Plug>MdwiReturn :MdwiReturn<CR>
+command! -buffer MdwiReturn call MdwiReturn()
+nnoremap <buffer> <script> <Plug>MdwiReturn :MdwiReturn<CR>
 if !hasmapto('<Plug>MdwiReturn')
-  nmap <silent> <S-CR> <Plug>MdwiReturn
+  nmap <buffer> <silent> <S-CR> <Plug>MdwiReturn
 endif
 
