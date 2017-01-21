@@ -27,6 +27,11 @@
 " You can fork this project on Github :
 " https://github.com/mmai/vim-markdown-wiki
 
+if exists("b:did_ftplugin")
+  finish
+endif
+let b:did_ftplugin = 1
+
 "initVariable borrowed from NERDTree
 function! s:initVariable(var, value)
     if !exists(a:var)
