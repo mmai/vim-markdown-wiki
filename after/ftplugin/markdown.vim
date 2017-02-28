@@ -1,7 +1,7 @@
-" File: vim-markdown-wiki.vim
+" File: mkd_wiki.vim
 " Author: Henri Bourcereau 
-" Version: 1.3
-" Last Modified: March 21, 2015
+" Version: 1.4
+" Last Modified: April 28, 2017
 "
 " "vim-markdown-wiki" is a Vim plugin which eases the navigation between files 
 " in a personnal wiki
@@ -9,7 +9,7 @@
 "
 " Installation
 " ------------
-" Copy the vim-markdown-wiki.vim file into the $HOME/.vim/plugin/ directory
+" Copy the markdown.vim file into the $HOME/.vim/after/ftplugin/ directory
 "
 " Usage
 " -----
@@ -26,11 +26,6 @@
 " ----------
 " You can fork this project on Github :
 " https://github.com/mmai/vim-markdown-wiki
-
-if exists("b:did_ftplugin")
-  finish
-endif
-let b:did_ftplugin = 1
 
 "initVariable borrowed from NERDTree
 function! s:initVariable(var, value)
