@@ -11,7 +11,16 @@
 " ------------
 " Copy the markdown.vim file into the $HOME/.vim/after/ftplugin/ directory
 "
-" Usage
+" Change key mappings in your vim config file
+" --------
+" 
+" Create or go to link :
+" nnoremap  <CR> :MdwiGotoLink 
+"
+" Return to previous page :
+" nnoremap  <Leader><CR> :MdwiReturn
+"
+" Usage 
 " -----
 " Link creation : 
 " - Hit the ENTER key when the cursor is on a text between brackets : `[a title]`
@@ -20,7 +29,8 @@
 " Navigation : 
 " - Hit the ENTER key when the cursor is on a wiki link
 " - The corresponding link file is loaded in the current buffer.
-" - Hit Shift + ENTER to go back
+" - Hit leader key + ENTER to go back
+
 
 " Contribute
 " ----------
@@ -208,6 +218,6 @@ endif
 command! -buffer MdwiReturn call MdwiReturn()
 nnoremap <buffer> <script> <Plug>MdwiReturn :MdwiReturn<CR>
 if !hasmapto('<Plug>MdwiReturn')
-  nmap <buffer> <silent> <S-CR> <Plug>MdwiReturn
+  nmap <buffer> <silent> <Leader><CR> <Plug>MdwiReturn
 endif
 

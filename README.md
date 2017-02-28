@@ -12,6 +12,8 @@ Installation
 Usage
 -----
 
+With the default key mappings :
+
 **Link creation:**
 
  - Hit the ENTER key when the cursor is on a text between brackets : `[a title]`
@@ -21,5 +23,13 @@ Usage
 
  - Hit the ENTER key when the cursor is on a wiki link
  - The corresponding link file is loaded in the current buffer.
- - Hit Shift + ENTER to go back
+ - Hit Leader key + ENTER to go back
 
+Change key mappings in your vim config file
+--------
+
+Create or go to link :
+`nnoremap  <CR> :MdwiGotoLink`
+
+Return to previous page  :
+`nnoremap  <Leader><CR> :MdwiReturn`
