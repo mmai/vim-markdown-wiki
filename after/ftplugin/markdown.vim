@@ -1,7 +1,7 @@
-" File: mkd_wiki.vim
+" File: markdown.vim
 " Author: Henri Bourcereau 
-" Version: 1.4
-" Last Modified: April 28, 2017
+" Version: 1.5
+" Last Modified: December 9, 2018
 "
 " "vim-markdown-wiki" is a Vim plugin which eases the navigation between files 
 " in a personnal wiki
@@ -45,6 +45,16 @@ function! s:initVariable(var, value)
     endif
     return 0
 endfunction
+
+" Set default title
+" if !exists("g:mdwiTitle")
+"   let g:mdwiTitle = 'normal!\ a'.escape(word, ' \').'\<esc>yypv$r=o\<cr>'
+
+if !exists('*MdwiWriteTitle')
+function! MdwiWriteTitle(word)
+  return 'normal!\ a'.escape(a:word, ' \').'\<esc>yypv$r=o\<cr>'
+endfunction
+endif
 
 "Initialize variables
 call s:initVariable("s:footer", "_Footer")
@@ -192,7 +202,8 @@ function! MdwiGotoLink()
       exec "normal! a(".relativepath.")"
       exec ":w"
       "Write title to the new document
-      let strCmd = 'normal!\ a'.escape(word, ' \').'\<esc>yypv$r=o\<cr>'
+      " let strCmd = 'normal!\ a'.escape(word, ' \').'\<esc>yypv$r=o\<cr>'
+      let strCmd = MdwiWriteTitle(word)
     endif
 
     let link = MdwiFilePath(relativepath)

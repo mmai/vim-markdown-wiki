@@ -33,3 +33,41 @@ Create or go to link :
 
 Return to previous page  :
 `nnoremap  <Leader><CR> :MdwiReturn`
+
+Customize new pages titles
+--------
+
+You can override the default format of the titles by defining a function _MdwiWriteTitle_ in your vim config file.
+
+The default is :
+
+```vim
+function! MdwiWriteTitle(word)
+  return 'normal!\ a'.escape(a:word, ' \').'\<esc>yypv$r=o\<cr>'
+endfunction
+```
+
+which write the titles like this :
+
+```
+New page
+========
+
+```
+
+Here is an example of a custom function which uses the `# ` style instead of underlining, and adds a timestamp before the title :
+
+```vim
+ function! MdwiWriteTitle(word)
+   return 'normal!\ a# '.strftime('%c').' - '.escape(a:word, ' \').'\<esc>'
+ endfunction
+```
+
+the result is something like this, depending on your locale : 
+
+```
+# Thu 10 Dec 2018 08:44:37 CET - New page
+
+```
+
+
