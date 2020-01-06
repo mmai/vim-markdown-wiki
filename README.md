@@ -25,7 +25,7 @@ With the default key mappings :
  - The corresponding link file is loaded in the current buffer.
  - Hit Leader key + ENTER to go back
  
- You can set a shortcut to open links in a new window, see below
+ You can set a shortcut to open links in a new split, see below
 
 Change key mappings in your vim config file
 --------
@@ -33,7 +33,7 @@ Change key mappings in your vim config file
 Create or go to link :
 `nnoremap  <CR> :MdwiGotoLink`
 
-Open link in a new window :
+Open link in a new split with SPACE + ENTER :
 `nnoremap <Space><CR> <C-w>v:MdwiGotoLink<CR>`
 
 Return to previous page  :
