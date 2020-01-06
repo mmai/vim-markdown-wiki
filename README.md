@@ -24,12 +24,17 @@ With the default key mappings :
  - Hit the ENTER key when the cursor is on a wiki link
  - The corresponding link file is loaded in the current buffer.
  - Hit Leader key + ENTER to go back
+ 
+ You can set a shortcut to open links in a new window, see below
 
 Change key mappings in your vim config file
 --------
 
 Create or go to link :
 `nnoremap  <CR> :MdwiGotoLink`
+
+Open link in a new window :
+`nnoremap <Space><CR> <C-w>v:MdwiGotoLink<CR>`
 
 Return to previous page  :
 `nnoremap  <Leader><CR> :MdwiReturn`
