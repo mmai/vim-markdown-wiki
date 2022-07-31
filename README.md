@@ -27,6 +27,15 @@ With the default key mappings :
  
  You can set a shortcut to open links in a new split, see below
 
+**Backlinks:**
+
+This feature is a work in progress and needs polishing.
+It needs NeoVim with the Telescope plugin. The two commands search files in the git repository containing the current document.
+
+ - `:MdwiBacklinks` : list the documents linked to the active file
+ - `:MdwiFriends` : if the cursor in on a link, list the documents linked to the target of the link
+
+
 Change key mappings in your vim config file
 --------
 
