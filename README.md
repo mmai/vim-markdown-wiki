@@ -30,7 +30,7 @@ With the default key mappings :
 **Backlinks:**
 
 This feature is a work in progress and needs polishing.
-It needs NeoVim with the Telescope plugin. The two commands search files in the git repository containing the current document.
+It requires NeoVim with the [Telescope plugin](https://github.com/nvim-telescope/telescope.nvim) and works only with files on a git repo : the commands search files in the git repository containing the current document.
 
  - `:MdwiBacklinks` : list the documents linked to the active file
  - `:MdwiFriends` : if the cursor in on a link, list the documents linked to the target of the link
