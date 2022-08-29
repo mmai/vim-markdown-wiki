@@ -232,13 +232,13 @@ if !hasmapto('<Plug>MdwiReturn')
   nmap <buffer> <silent> <Leader><CR> <Plug>MdwiReturn
 endif
 
-if exists('g:loaded_vim_markdown_wiki')
-    finish
-endif
-let g:loaded_vim_markdown_wiki = 1
-
 command! -buffer MdwiFriends lua require('markdown_wiki').friends_backlinks(<f-args>)
 nnoremap <buffer> <script> <Plug>MdwiFriends :MdwiFriends<CR>
 
 command! -buffer MdwiBacklinks lua require('markdown_wiki').file_backlinks(<f-args>)
 nnoremap <buffer> <script> <Plug>MdwiBacklinks :MdwiBacklinks<CR>
+
+if exists('g:loaded_vim_markdown_wiki')
+    finish
+endif
+let g:loaded_vim_markdown_wiki = 1
