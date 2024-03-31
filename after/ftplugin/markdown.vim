@@ -1,7 +1,7 @@
 " File: markdown.vim
 " Author: Henri Bourcereau 
-" Version: 1.5
-" Last Modified: December 9, 2018
+" Version: 1.6
+" Last Modified: March 31, 2024
 "
 " "vim-markdown-wiki" is a Vim plugin which eases the navigation between files 
 " in a personnal wiki
@@ -36,6 +36,12 @@
 " ----------
 " You can fork this project on Github :
 " https://github.com/mmai/vim-markdown-wiki
+
+" Don't load the plugin if this is not a regular file 
+" (fix conflict with rustaceanvim code action menu which has a markdown filetype)
+if &buftype == "nofile" || &buftype == "nowrite"
+    finish
+endif
 
 "initVariable borrowed from NERDTree
 function! s:initVariable(var, value)
